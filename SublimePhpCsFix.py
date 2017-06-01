@@ -1,5 +1,5 @@
 import sublime, sublime_plugin, subprocess
-import os, tempfile
+import os, tempfile, json
 
 
 def load_settings():
@@ -14,7 +14,7 @@ class SublimePhpCsFixCommand(sublime_plugin.TextCommand):
 
         if contents:
             formatted = self.fix(contents)
-            if formatted:
+            if formatted and formatted != contents:
                 self.view.replace(edit, region, formatted)
 
     def fix(self, contents):
@@ -35,23 +35,32 @@ class SublimePhpCsFixCommand(sublime_plugin.TextCommand):
     def format_file(self, tmp_file):
         settings = load_settings()
 
-        cmd = []
         path = settings.get('path')
-        rules = settings.get('rules')
-
         if not path:
             path = "php-cs-fixer"
 
-        cmd.append(path)
-        cmd.append("fix")
-        cmd.append(tmp_file)
+        config = settings.get('config')
+        rules = settings.get('rules')
+
+        cmd = [path, "fix", "--using-cache=off", tmp_file]
+
+        if config:
+            cmd.append('--config=' + config)
 
         if rules:
             if isinstance(rules, list):
                 rules = rules.join(",")
-            cmd.append("--rules=" + rules)
 
-        subprocess.call(cmd)
+            if isinstance(rules, str):
+                cmd.append("--rules=" + rules)
+
+        p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        output, err = p.communicate()
+
+        if p.returncode != 0:
+            print("There was an error formatting the view")
+            print(cmd)
+            print(err)
 
 
 class SublimePhpCsFixListener(sublime_plugin.EventListener):

@@ -18,15 +18,13 @@
                         "caption": "PHP CS Fixer",
                         "children": [
                             {
-                                "command": "sublime_php_cs_fix",
-                                "args": {
+                                "command": "open_file", "args": {
                                     "file": "${packages}/SublimePhpCsFixer/SublimePhpCsFixer.sublime-settings"
                                 },
                                 "caption": "Settings - Default"
                             },
                             {
-                                "command": "sublime_php_cs_fix",
-                                "args": {
+                                "command": "open_file", "args": {
                                     "file": "${packages}/User/SublimePhpCsFixer.sublime-settings"
                                 },
                                 "caption": "Settings - User"
