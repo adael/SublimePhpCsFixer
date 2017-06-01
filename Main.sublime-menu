@@ -1,0 +1,91 @@
+[
+    {
+        "id": "tools",
+        "children": [
+            {
+                "caption": "PHP CS Fixer",
+                "command": "sublime_php_cs_fix",
+            }
+        ]
+    },
+    {
+        "id": "preferences",
+        "children": [
+            {
+                "id": "package-settings",
+                "children": [
+                    {
+                        "caption": "PHP CS Fixer",
+                        "children": [
+                            {
+                                "command": "sublime_php_cs_fix",
+                                "args": {
+                                    "file": "${packages}/SublimePhpCsFixer/SublimePhpCsFixer.sublime-settings"
+                                },
+                                "caption": "Settings - Default"
+                            },
+                            {
+                                "command": "sublime_php_cs_fix",
+                                "args": {
+                                    "file": "${packages}/User/SublimePhpCsFixer.sublime-settings"
+                                },
+                                "caption": "Settings - User"
+                            },
+                            {
+                                "caption": "-"
+                            },
+                            {
+                                "caption": "Key Bindings – Default",
+                                "command": "open_file", "args":
+                                {
+                                    "file": "${packages}/SublimePhpCsFixer/Default (OSX).sublime-keymap",
+                                    "platform": "OSX"
+                                }
+                            },
+                            {
+                                "caption": "Key Bindings – User",
+                                "command": "open_file", "args":
+                                {
+                                    "file": "${packages}/User/Default (OSX).sublime-keymap",
+                                    "platform": "OSX"
+                                }
+                            },
+                            {
+                                "caption": "Key Bindings – Default",
+                                "command": "open_file", "args":
+                                {
+                                    "file": "${packages}/SublimePhpCsFixer/Default (Linux).sublime-keymap",
+                                    "platform": "Linux"
+                                }
+                            },
+                            {
+                                "caption": "Key Bindings – User",
+                                "command": "open_file", "args":
+                                {
+                                    "file": "${packages}/User/Default (Linux).sublime-keymap",
+                                    "platform": "Linux"
+                                }
+                            },
+                            {
+                                "caption": "Key Bindings – Default",
+                                "command": "open_file", "args":
+                                {
+                                    "file": "${packages}/SublimePhpCsFixer/Default (Windows).sublime-keymap",
+                                    "platform": "Windows"
+                                }
+                            },
+                            {
+                                "caption": "Key Bindings – User",
+                                "command": "open_file", "args":
+                                {
+                                    "file": "${packages}/User/Default (Windows).sublime-keymap",
+                                    "platform": "Windows"
+                                }
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    }
+]

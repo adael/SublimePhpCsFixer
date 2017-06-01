@@ -1,0 +1,6 @@
+[
+    {
+        "caption": "PHP CS Fixer: format this file",
+        "command": "sublime_php_cs_fix",
+    },
+]
