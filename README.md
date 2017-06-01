@@ -7,7 +7,7 @@ the option to run the php-cs-fixer.
 * It works inside a temporal view (ie: on an inexistent file)
 * Fast
 * Easy
-* Configurable trough rules
+* Configurable through rules
 
 # Install php-cs-fixer
 https://github.com/FriendsOfPHP/PHP-CS-Fixer
