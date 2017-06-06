@@ -38,9 +38,9 @@ it works flawlessly. All the work here belongs to them.
 
 Check them at:
 
-    * https://github.com/FriendsOfPHP/PHP-CS-Fixer
-    * http://cs.sensiolabs.org/
+* https://github.com/FriendsOfPHP/PHP-CS-Fixer
+* http://cs.sensiolabs.org/
 
 I'd also learned some of the sublime package structure from:
 
-    * https://github.com/Ennosuke/PHP-Codebeautifier
+* https://github.com/Ennosuke/PHP-Codebeautifier
