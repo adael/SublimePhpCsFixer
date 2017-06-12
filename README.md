@@ -29,7 +29,7 @@ Also you can create a config file as explained here https://github.com/FriendsOf
         'array_syntax' => ['syntax' => 'short'],
     ]);
     
-If you've created a config file, you have to configure his path in the plugin's settings.
+If you've created a config file, you have to configure its path in the plugin's settings.
 
 *In Menu -> Preferences -> Package Settings -> PHP CS Fixer -> Settings - user*
     
@@ -37,7 +37,7 @@ If you've created a config file, you have to configure his path in the plugin's 
         "config": "/path/to/.phpcsfixer"
     }
 
-Please note that this plugin don't try to find the config file automatically. If you want to create a config file, you have to specify his path in the plugin settings.
+Please note that this plugin don't try to find the config file automatically. If you want to create a config file, you have to specify its path in the plugin settings.
 
 Although you can configure the rules directly on your plugin settings, it's recommended to create the config file, as it's easier to configure every rule than using the 'rules' directive in the plugin settings.
 
