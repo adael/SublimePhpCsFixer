@@ -12,13 +12,34 @@ the php-cs-fixer command on any view.
 
 # Configuration
 
-You have to install the real php-cs-fixer (the real tool made by sensiolabs, not this plugin)
+You have to install the actual php-cs-fixer (the actual tool made by sensiolabs, not this plugin)
 
 You can install php-cs-fixer directly with composer by running:
 
     composer global require friendsofphp/php-cs-fixer
 
-For more information check https://github.com/FriendsOfPHP/PHP-CS-Fixer
+Also you can create a config file as explained here https://github.com/FriendsOfPHP/PHP-CS-Fixer
+
+*for example in:* `$HOME/.phpcsfixer`
+
+    <?php     
+    return PhpCsFixer\Config::create()
+    ->setRules([
+        '@Symfony' => true,
+        'array_syntax' => ['syntax' => 'short'],
+    ]);
+    
+If you've created a config file, you have to configure his path in the plugin's settings.
+
+*In Menu -> Preferences -> Package Settings -> PHP CS Fixer -> Settings - user*
+    
+    {
+        "config": "/path/to/.phpcsfixer"
+    }
+
+Please note that this plugin don't try to find the config file automatically. If you want to create a config file, you have to specify his path in the plugin settings.
+
+Although you can configure the rules directly on your plugin settings, it's recommended to create the config file, as it's easier to configure every rule than using the 'rules' directive in the plugin settings.
 
 ### On Windows:
 
