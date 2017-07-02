@@ -101,6 +101,10 @@ def format_file(tmp_file):
     cmd = [path, "fix", "--using-cache=off", tmp_file]
     
     if config:
+        variables = sublime.active_window().extract_variables()
+        if 'folder' in variables:
+            config = config.replace('${folder}', variables['folder'])
+        
         cmd.append('--config=' + config)
     
     if rules:

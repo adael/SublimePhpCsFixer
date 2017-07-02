@@ -36,6 +36,12 @@ If you've created a config file, you have to configure its path in the plugin's 
         "config": "/path/to/.phpcsfixer"
     }
 
+When using multiple projects with different configurations, it's possible to configure the path relative to the Sublime project folder:
+
+    {
+        "config": "${folder}/.php_cs.dist"
+    }
+
 Please note that this plugin don't try to find the config file automatically. If you want to create a config file, you have to specify its path in the plugin settings.
 
 Although you can configure the rules directly on your plugin settings, it's recommended to create the config file, as it's easier to configure every rule than using the 'rules' directive in the plugin settings.
