@@ -4,7 +4,7 @@
         "children": [
             {
                 "caption": "PHP CS Fixer",
-                "command": "sublime_php_cs_fix",
+                "command": "sublime_php_cs_fix"
             }
         ]
     },
