@@ -14,8 +14,8 @@ def is_windows():
     return sublime.platform() == "windows"
 
 
-def is_file(fpath):
-    return os.path.isfile(fpath) and os.access(fpath, os.X_OK)
+def is_file(file_path):
+    return os.path.isfile(file_path) and os.access(file_path, os.X_OK)
 
 
 def which(program):
@@ -35,28 +35,48 @@ def which(program):
 
 
 def locate_php_cs_fixer():
-    """tries to locate the php-cs-fixer on Windows"""
     if is_windows():
-        return locate_in_windows()
+        paths = locate_in_windows()
     else:
-        return locate_in_linux()
+        paths = locate_in_linux()
+    
+    for path in paths:
+        if is_file(path):
+            log_to_console("autodetected: " + path)
+            return path
+    
+    log_to_console("php-cs-fixer file not found")
 
 
 def locate_in_windows():
-    path = os.environ["APPDATA"] + "\\composer\\vendor\\bin\\php-cs-fixer.bat"
-    if is_file(path):
-        return path
-    else:
-        return which("php-cs-fixer.bat")
+    """return possible paths for php-cs-fixer on Windows"""
+    paths = []
+    
+    if "COMPOSER_HOME" in os.environ:
+        paths.append(os.environ["COMPOSER_HOME"] + "\\vendor\\bin\\php-cs-fixer.bat")
+    
+    if "APPDATA" in os.environ:
+        paths.append(os.environ["APPDATA"] + "\\composer\\vendor\\bin\\php-cs-fixer.bat")
+    
+    paths.append(which("php-cs-fixer.bat"))
+    
+    return paths
 
 
 def locate_in_linux():
-    path = os.environ["COMPOSER_HOME"] + "/vendor/bin/php-cs-fixer"
-    if is_file(path):
-        return path
-    else:
-        log_to_console("php-cs-fixer file not found, falling back to default command")
-        return which("php-cs-fixer")
+    """return possible paths for php-cs-fixer on Linux and Mac"""
+    paths = []
+    
+    if "COMPOSER_HOME" in os.environ:
+        paths.append(os.environ["COMPOSER_HOME"] + "/vendor/bin/php-cs-fixer")
+    
+    if "HOME" in os.environ:
+        paths.append(os.environ["HOME"] + "/.composer/vendor/bin/php-cs-fixer")
+        paths.append(os.environ["HOME"] + "/.config/composer/vendor/bin/php-cs-fixer")
+    
+    paths.append(which("php-cs-fixer"))
+    
+    return paths
 
 
 def log_to_console(msg):
@@ -64,16 +84,30 @@ def log_to_console(msg):
 
 
 def format_contents(contents):
+    """
+    Write the contents in a temporary file, format it with php-cs-fixer and return the formatted contents.
+     
+    For supporting ST2 and ST3, I do use the following, because it's compatible in python 2/3 and seems
+    to work properly.
+     
+        - file.write(contents.encode(encoding))
+        - file.read().decode(encoding)
+   
+    :param contents:
+    :return:
+    """
     fd, tmp_file = tempfile.mkstemp()
     
+    encoding = "utf8"
+    
     with open(tmp_file, 'wb') as file:
-        file.write(contents.encode('utf8'))
+        file.write(contents.encode(encoding))
         file.close()
     
     try:
         format_file(tmp_file)
-        with open(tmp_file, 'r', encoding='utf8') as file:
-            content = file.read()
+        with open(tmp_file, 'rb') as file:
+            content = file.read().decode(encoding)
             file.close()
     finally:
         os.close(fd)
@@ -106,6 +140,7 @@ def format_file(tmp_file):
             config = config.replace('${folder}', variables['folder'])
         
         cmd.append('--config=' + config)
+        log_to_console("Using config: " + config)
     
     if rules:
         if isinstance(rules, list):
@@ -113,6 +148,7 @@ def format_file(tmp_file):
         
         if isinstance(rules, str):
             cmd.append("--rules=" + rules)
+            log_to_console("Using rules: " + rules)
     
     p = create_process_for_platform(cmd)
     output, err = p.communicate()
