@@ -80,7 +80,7 @@ def locate_in_linux():
 
 
 def log_to_console(msg):
-    print("PHP CS Fixer: {}".format(msg))
+    print("PHP CS Fixer: {0}".format(msg))
 
 
 def format_contents(contents):
@@ -127,7 +127,7 @@ def format_file(tmp_file):
     if not path:
         raise ExecutableNotFoundException("Couldn't find php-cs-fixer")
     if not is_file(path):
-        raise ExecutableNotFoundException("Couldn't execute file: {}".format(path))
+        raise ExecutableNotFoundException("Couldn't execute file: {0}".format(path))
     
     config = settings.get('config')
     rules = settings.get('rules')
@@ -155,8 +155,8 @@ def format_file(tmp_file):
     
     if p.returncode != 0:
         log_to_console("There was an error formatting the view")
-        log_to_console("Command: {}".format(cmd))
-        log_to_console("Error output: {}".format(err))
+        log_to_console("Command: {0}".format(cmd))
+        log_to_console("Error output: {0}".format(err))
 
 
 def create_process_for_platform(cmd):
