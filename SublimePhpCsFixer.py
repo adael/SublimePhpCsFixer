@@ -72,7 +72,7 @@ def format_contents(contents):
     
     try:
         format_file(tmp_file)
-        with open(tmp_file, 'r') as file:
+        with open(tmp_file, 'r', encoding='utf8') as file:
             content = file.read()
             file.close()
     finally:
