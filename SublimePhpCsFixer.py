@@ -51,7 +51,7 @@ def locate_in_windows():
 
 
 def locate_in_linux():
-    path = os.environ["HOME"] + "/.composer/vendor/bin/php-cs-fixer"
+    path = os.environ["COMPOSER_HOME"] + "/vendor/bin/php-cs-fixer"
     if is_file(path):
         return path
     else:
