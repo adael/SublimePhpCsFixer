@@ -119,6 +119,7 @@ def format_contents(contents):
 def format_file(tmp_file):
     settings = load_settings()
     
+    php_path = settings.get('php_path')
     path = settings.get('path')
     
     if not path:
@@ -132,7 +133,8 @@ def format_file(tmp_file):
     config = settings.get('config')
     rules = settings.get('rules')
     
-    cmd = [path, "fix", "--using-cache=off", tmp_file]
+    cmd = [php_path] if php_path else []
+    cmd += [path, "fix", "--using-cache=off", tmp_file]
     
     if config:
         variables = sublime.active_window().extract_variables()
