@@ -7,7 +7,7 @@ This is a plugin for Sublime Text 3 to format PHP code through php-cs-fixer comm
 * Fast
 * Easy
 * Configurable through rules or a config file
-* Tested on Windows and Linux 
+* Tested on Windows and Linux
 
 # Configuration
 
@@ -21,17 +21,17 @@ Also you can create a config file as explained here https://github.com/FriendsOf
 
 *for example in:* `$HOME/.phpcsfixer`
 
-    <?php     
+    <?php
     return PhpCsFixer\Config::create()
     ->setRules([
         '@Symfony' => true,
         'array_syntax' => ['syntax' => 'short'],
     ]);
-    
+
 If you've created a config file, you have to configure its path in the plugin's settings.
 
 *In Menu -> Preferences -> Package Settings -> PHP CS Fixer -> Settings - user*
-    
+
     {
         "config": "/path/to/.phpcsfixer"
     }
@@ -54,7 +54,7 @@ It's also possible to specify multiple config paths. In that case, the first rea
         ]
     }
 
-See [`extract_variables` in the Sublime API Reference](https://www.sublimetext.com/docs/3/api_reference.html#sublime.Window) for the supported replacement variables.
+See [`extract_variables` in the Sublime API Reference](https://www.sublimetext.com/docs/3/api_reference.html#sublime.Window) for the supported replacement variables. The value of the `${folder}` points the path of the first project in Sublime API. Here, it's beforehand replaced with the path of the project the target file belongs.
 
 Please note that this plugin don't try to find the config file automatically. If you want to create a config file, you have to specify its path in the plugin settings.
 
@@ -62,9 +62,9 @@ Although you can configure the rules directly on your plugin settings, it's reco
 
 ### On Windows:
 
-The plugin tries to find the executable in: 
+The plugin tries to find the executable in:
 
-    %APPDATA%\composer\vendor\bin\php-cs-fixer.bat 
+    %APPDATA%\composer\vendor\bin\php-cs-fixer.bat
 
 If it isn't working, you can locate your composer global packages path by running:
 
@@ -75,7 +75,7 @@ If it isn't working, you can locate your composer global packages path by runnin
 After installing php-cs-fixer you have to specify the full path to the
 executable in the configuration page.
 
-The plugin tries to find the executable in: 
+The plugin tries to find the executable in:
 
     $HOME/.composer/vendor/bin/php-cs-fixer
 
