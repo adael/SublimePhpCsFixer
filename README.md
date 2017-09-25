@@ -42,6 +42,20 @@ When using multiple projects with different configurations, it's possible to con
         "config": "${folder}/.php_cs.dist"
     }
 
+It's also possible to specify multiple config paths. In that case, the first readable file is used:
+
+    {
+        "config": [
+            "${file_path}/.php_cs",
+            "${file_path}/.php_cs.dist",
+            "${folder}/.php_cs",
+            "${folder}/.php_cs.dist",
+            "/path/to/.phpcsfixer"
+        ]
+    }
+
+See [`extract_variables` in the Sublime API Reference](https://www.sublimetext.com/docs/3/api_reference.html#sublime.Window) for the supported replacement variables.
+
 Please note that this plugin don't try to find the config file automatically. If you want to create a config file, you have to specify its path in the plugin settings.
 
 Although you can configure the rules directly on your plugin settings, it's recommended to create the config file, as it's easier to configure every rule than using the 'rules' directive in the plugin settings.

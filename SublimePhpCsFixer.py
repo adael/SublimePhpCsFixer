@@ -14,21 +14,25 @@ def is_windows():
     return sublime.platform() == "windows"
 
 
-def is_file(file_path):
+def is_executable_file(file_path):
     return os.path.isfile(file_path) and os.access(file_path, os.X_OK)
+
+
+def is_readable_file(file_path):
+    return os.path.isfile(file_path) and os.access(file_path, os.R_OK)
 
 
 def which(program):
     """Code from: https://stackoverflow.com/a/377028/584639"""
     fpath, fname = os.path.split(program)
     if fpath:
-        if is_file(program):
+        if is_executable_file(program):
             return program
     else:
         for path in os.environ["PATH"].split(os.pathsep):
             path = path.strip('"')
             exe_file = os.path.join(path, program)
-            if is_file(exe_file):
+            if is_executable_file(exe_file):
                 return exe_file
 
     return None
@@ -41,7 +45,7 @@ def locate_php_cs_fixer():
         paths = locate_in_linux()
 
     for path in paths:
-        if is_file(path):
+        if is_executable_file(path):
             log_to_console("autodetected: " + path)
             return path
 
@@ -127,22 +131,26 @@ def format_file(tmp_file):
 
     if not path:
         raise ExecutableNotFoundException("Couldn't find php-cs-fixer")
-    if not is_file(path):
+    if not is_executable_file(path):
         raise ExecutableNotFoundException("Couldn't execute file: {0}".format(path))
 
-    config = settings.get('config')
+    configs = settings.get('config')
     rules = settings.get('rules')
 
     cmd = [php_path] if php_path else []
     cmd += [path, "fix", "--using-cache=off", tmp_file]
 
-    if config:
-        variables = sublime.active_window().extract_variables()
-        if 'folder' in variables:
-            config = config.replace('${folder}', variables['folder'])
+    if configs:
+        if not type(configs) is list:
+            configs = [configs]
 
-        cmd.append('--config=' + config)
-        log_to_console("Using config: " + config)
+        variables = sublime.active_window().extract_variables()
+        for config in configs:
+            config_path = sublime.expand_variables(config, variables)
+            if is_readable_file(config_path):
+                cmd.append('--config=' + config_path)
+                log_to_console("Using config: " + config_path)
+                break;
 
     if rules:
         if isinstance(rules, list):
