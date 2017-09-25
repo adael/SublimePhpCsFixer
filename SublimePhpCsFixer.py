@@ -145,6 +145,11 @@ def format_file(tmp_file):
             configs = [configs]
 
         variables = sublime.active_window().extract_variables()
+
+        folder = get_project_folder(variables['file'])
+        if folder:
+            variables['folder'] = folder
+
         for config in configs:
             config_path = sublime.expand_variables(config, variables)
             if is_readable_file(config_path):
@@ -178,6 +183,17 @@ def create_process_for_platform(cmd):
         si = None
 
     return subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, bufsize=0, startupinfo=si)
+
+
+def get_project_folder(file):
+    project_folders = sublime.active_window().project_data().get('folders', [])
+    print(project_folders)
+    project_paths = (p['path'] for p in project_folders)
+    for path in project_paths:
+        if file.startswith(path):
+            return path
+
+    return None
 
 
 class SublimePhpCsFixCommand(sublime_plugin.TextCommand):
