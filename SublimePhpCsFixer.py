@@ -186,7 +186,13 @@ def create_process_for_platform(cmd):
 
 
 def get_project_folder(file):
-    project_folders = sublime.active_window().project_data().get('folders', [])
+
+    project_data = sublime.active_window().project_data();
+
+    if not project_data:
+        return None
+
+    project_folders = project_data.get('folders', [])
     project_paths = (p['path'] for p in project_folders)
     for path in project_paths:
         if file.startswith(path):
