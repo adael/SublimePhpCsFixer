@@ -144,11 +144,7 @@ def format_file(tmp_file):
         if not type(configs) is list:
             configs = [configs]
 
-        variables = sublime.active_window().extract_variables()
-
-        folder = get_project_folder(variables['file'])
-        if folder:
-            variables['folder'] = folder
+        variables = get_active_window_variables()
 
         for config in configs:
             config_path = sublime.expand_variables(config, variables)
@@ -172,6 +168,17 @@ def format_file(tmp_file):
         log_to_console("There was an error formatting the view")
         log_to_console("Command: {0}".format(cmd))
         log_to_console("Error output: {0}".format(err))
+
+
+def get_active_window_variables():
+    variables = sublime.active_window().extract_variables()
+
+    if 'file' in variables:
+        folder = get_project_folder(variables['file'])
+        if folder:
+            variables['folder'] = folder
+
+    return variables
 
 
 def create_process_for_platform(cmd):
