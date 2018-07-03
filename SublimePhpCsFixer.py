@@ -209,6 +209,9 @@ def get_project_folder(file):
 
 
 class SublimePhpCsFixCommand(sublime_plugin.TextCommand):
+    def is_enabled(self):
+        return self.is_supported_scope(self.view)
+
     def run(self, edit):
         try:
             log_to_console("Formatting view...")
@@ -226,6 +229,9 @@ class SublimePhpCsFixCommand(sublime_plugin.TextCommand):
                 log_to_console("Done. No contents")
         except ExecutableNotFoundException as e:
             log_to_console(str(e))
+
+    def is_supported_scope(self, view):
+        return 'embedding.php' in view.scope_name(self.view.sel()[0].begin())
 
 
 class SublimePhpCsFixListener(sublime_plugin.EventListener):
