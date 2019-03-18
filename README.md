@@ -71,6 +71,8 @@ In order to exclude files from php-cs-fixer, you can use the "exclude" setting:
         ]
     }
 
+The exclude-filter uses python regular expressions, for more information see: https://docs.python.org/2/library/re.html
+
 
 ### On Windows:
 
