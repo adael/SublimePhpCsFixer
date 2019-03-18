@@ -62,16 +62,18 @@ Although you can configure the rules directly on your plugin settings, it's reco
 
 ## Exclude files
 
-Since all PHP files are passed directly to the php-cs-fixer executable, a configured PhpCsFixer\\Finder gets ignored.
+Since all php files are passed directly to the php-cs-fixer executable, a configured PhpCsFixer\\Finder gets ignored.
 In order to exclude files from php-cs-fixer, you can use the "exclude" setting:
 
     {
         "exclude": [
-            ".*\\.phtml$"
+            ".*[\\\\/]vendor[\\\\/].*", // vendor-path (used by Composer)
+            ".*\\.phtml$" // files ending with ".phtml"
         ]
     }
 
-The exclude-filter uses python regular expressions, for more information see: https://docs.python.org/2/library/re.html
+The exclude-filter uses python regular expressions.
+For more information see: https://docs.python.org/2/library/re.html
 
 
 ### On Windows:

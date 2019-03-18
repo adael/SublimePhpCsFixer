@@ -5,8 +5,5 @@
     "config": "",
     "on_save": false,
     "on_load": false
-    "exclude": [
-      ".*[\\/](vendor|svn)[\\/].*",
-      "\\..*$",
-    ]
+    "exclude": []
 }
