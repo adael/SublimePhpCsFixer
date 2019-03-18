@@ -60,6 +60,18 @@ Please note that this plugin don't try to find the config file automatically. If
 
 Although you can configure the rules directly on your plugin settings, it's recommended to create the config file, as it's easier to configure every rule than using the 'rules' directive in the plugin settings.
 
+## Exclude files
+
+Since all PHP files are passed directly to the php-cs-fixer executable, a configured PhpCsFixer\\Finder gets ignored.
+In order to exclude files from php-cs-fixer, you can use the "exclude" setting:
+
+    {
+        "exclude": [
+            ".*\\.phtml$"
+        ]
+    }
+
+
 ### On Windows:
 
 The plugin tries to find the executable in:

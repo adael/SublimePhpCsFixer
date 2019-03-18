@@ -1,5 +1,6 @@
 import sublime, sublime_plugin
 import os, tempfile, subprocess
+import re
 
 
 def load_settings():
@@ -87,7 +88,7 @@ def log_to_console(msg):
     print("PHP CS Fixer: {0}".format(msg))
 
 
-def format_contents(contents):
+def format_contents(contents, settings):
     """
     Write the contents in a temporary file, format it with php-cs-fixer and return the formatted contents.
 
@@ -109,7 +110,7 @@ def format_contents(contents):
         file.close()
 
     try:
-        format_file(tmp_file)
+        format_file(tmp_file, settings)
         with open(tmp_file, 'rb') as file:
             content = file.read().decode(encoding)
             file.close()
@@ -120,9 +121,7 @@ def format_contents(contents):
     return content
 
 
-def format_file(tmp_file):
-    settings = load_settings()
-
+def format_file(tmp_file, settings):
     php_path = settings.get('php_path')
     path = settings.get('path')
 
@@ -209,6 +208,10 @@ def get_project_folder(file):
 
 
 class SublimePhpCsFixCommand(sublime_plugin.TextCommand):
+    def __init__(self, view):
+        sublime_plugin.TextCommand.__init__(self, view)
+        self.settings = load_settings()
+
     def is_enabled(self):
         return self.is_supported_scope(self.view)
 
@@ -219,7 +222,7 @@ class SublimePhpCsFixCommand(sublime_plugin.TextCommand):
             contents = self.view.substr(region)
 
             if contents:
-                formatted = format_contents(contents)
+                formatted = format_contents(contents, self.settings)
                 if formatted and formatted != contents:
                     self.view.replace(edit, region, formatted)
                     log_to_console("Done. View formatted")
@@ -231,7 +234,26 @@ class SublimePhpCsFixCommand(sublime_plugin.TextCommand):
             log_to_console(str(e))
 
     def is_supported_scope(self, view):
-        return 'embedding.php' in view.scope_name(self.view.sel()[0].begin())
+        return 'embedding.php' in view.scope_name(view.sel()[0].begin()) and not self.is_excluded(view)
+
+    def is_excluded(self, view):
+        log_to_console(self.settings)
+        
+        if not self.settings.has('exclude'):
+            return False
+
+        exclude = self.settings.get('exclude')
+        file_name = view.file_name()
+
+        if not type(exclude) is list:
+            exclude = [exclude]
+
+        for pattern in exclude:
+            if re.match(pattern, file_name) is not None:
+                log_to_console(file_name + ' is excluded via pattern: ' + pattern)
+                return True
+
+        return False
 
 
 class SublimePhpCsFixListener(sublime_plugin.EventListener):
