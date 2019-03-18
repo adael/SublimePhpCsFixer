@@ -236,9 +236,7 @@ class SublimePhpCsFixCommand(sublime_plugin.TextCommand):
     def is_supported_scope(self, view):
         return 'embedding.php' in view.scope_name(view.sel()[0].begin()) and not self.is_excluded(view)
 
-    def is_excluded(self, view):
-        log_to_console(self.settings)
-        
+    def is_excluded(self, view):        
         if not self.settings.has('exclude'):
             return False
 
