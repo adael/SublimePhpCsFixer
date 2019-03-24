@@ -60,6 +60,22 @@ Please note that this plugin don't try to find the config file automatically. If
 
 Although you can configure the rules directly on your plugin settings, it's recommended to create the config file, as it's easier to configure every rule than using the 'rules' directive in the plugin settings.
 
+## Exclude files
+
+Since all php files are passed directly to the php-cs-fixer executable, a configured PhpCsFixer\\Finder gets ignored.
+In order to exclude files from php-cs-fixer, you can use the "exclude" setting:
+
+    {
+        "exclude": [
+            ".*[\\\\/]vendor[\\\\/].*", // vendor-path (used by Composer)
+            ".*\\.phtml$" // files ending with ".phtml"
+        ]
+    }
+
+The exclude-filter uses python regular expressions.
+For more information see: https://docs.python.org/2/library/re.html
+
+
 ### On Windows:
 
 The plugin tries to find the executable in:
