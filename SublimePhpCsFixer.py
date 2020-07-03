@@ -40,6 +40,12 @@ def which(program):
 
 
 def locate_php_cs_fixer():
+    project_path = sublime.active_window().project_data()['folders'][0]['path']
+    path = os.path.join(project_path, "vendor/bin/php-cs-fixer")
+    if is_executable_file(path):
+        log_to_console("uses local installation")
+        return path
+
     if is_windows():
         paths = locate_in_windows()
     else:
@@ -236,7 +242,7 @@ class SublimePhpCsFixCommand(sublime_plugin.TextCommand):
     def is_supported_scope(self, view):
         return 'embedding.php' in view.scope_name(view.sel()[0].begin()) and not self.is_excluded(view)
 
-    def is_excluded(self, view):        
+    def is_excluded(self, view):
         if not self.settings.has('exclude'):
             return False
 
