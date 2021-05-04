@@ -19,10 +19,10 @@ You can install php-cs-fixer directly with composer by running:
 
 Also you can create a config file as explained here https://github.com/FriendsOfPHP/PHP-CS-Fixer
 
-*for example in:* `$HOME/.phpcsfixer`
+*for example in:* `$HOME/.php-cs-fixer.php`
 
     <?php
-    return PhpCsFixer\Config::create()
+    return (new PhpCsFixer\Config)
     ->setRules([
         '@Symfony' => true,
         'array_syntax' => ['syntax' => 'short'],
@@ -33,24 +33,22 @@ If you've created a config file, you have to configure its path in the plugin's 
 *In Menu -> Preferences -> Package Settings -> PHP CS Fixer -> Settings - user*
 
     {
-        "config": "/path/to/.phpcsfixer"
+        "config": "/path/to/.php-cs-fixer.php"
     }
 
 When using multiple projects with different configurations, it's possible to configure the path relative to the Sublime project folder:
 
     {
-        "config": "${folder}/.php_cs.dist"
+        "config": "${folder}/.php-cs-fixer.php"
     }
 
 It's also possible to specify multiple config paths. In that case, the first readable file is used:
 
     {
         "config": [
-            "${file_path}/.php_cs",
-            "${file_path}/.php_cs.dist",
-            "${folder}/.php_cs",
-            "${folder}/.php_cs.dist",
-            "/path/to/.phpcsfixer"
+            "${file_path}/.php-cs-fixer.php",
+            "${folder}/.php-cs-fixer.php",
+            "/path/to/.php-cs-fixer.php"
         ]
     }
 
