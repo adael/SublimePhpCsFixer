@@ -160,7 +160,7 @@ def format_file(tmp_file, settings):
 
     if rules:
         if isinstance(rules, list):
-            rules = rules.join(",")
+            rules = ",".join(rules)
 
         if isinstance(rules, str):
             cmd.append("--rules=" + rules)
