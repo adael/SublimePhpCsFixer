@@ -39,7 +39,9 @@ If you've created a config file, you have to configure its path in the plugin's 
 When using multiple projects with different configurations, it's possible to configure the path relative to the Sublime project folder:
 
     {
-        "config": "${folder}/.php_cs.dist"
+        "config": "${folder}/.php-cs-fixer.php"
+        "php": "${packages}/User/php",
+        "path": "${packages}/User/php-cs-fixer.php"
     }
 
 It's also possible to specify multiple config paths. In that case, the first readable file is used:
