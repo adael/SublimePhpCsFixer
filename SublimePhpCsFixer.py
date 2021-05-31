@@ -1,7 +1,7 @@
 import sublime, sublime_plugin
 import os, tempfile, subprocess
 import re
-
+import json
 
 def load_settings():
     return sublime.load_settings("SublimePhpCsFixer.sublime-settings")
@@ -161,6 +161,9 @@ def format_file(tmp_file, settings):
     if rules:
         if isinstance(rules, list):
             rules = ",".join(rules)
+
+        if isinstance(rules, dict):
+            rules = json.dumps(rules)
 
         if isinstance(rules, str):
             cmd.append("--rules=" + rules)
