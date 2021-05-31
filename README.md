@@ -58,6 +58,26 @@ Please note that this plugin don't try to find the config file automatically. If
 
 Although you can configure the rules directly on your plugin settings, it's recommended to create the config file, as it's easier to configure every rule than using the 'rules' directive in the plugin settings.
 
+## Rules
+
+    {
+        "rules": {
+            "@PhpCsFixer": true,
+        }
+
+        or
+
+        "rules": "@PhpCsFixer"
+
+        or
+
+        "rules": [
+            "@PhpCsFixer"
+        ]
+    }
+
+For more information see: https://github.com/FriendsOfPHP/PHP-CS-Fixer#usage
+
 ## Exclude files
 
 Since all php files are passed directly to the php-cs-fixer executable, a configured PhpCsFixer\\Finder gets ignored.
