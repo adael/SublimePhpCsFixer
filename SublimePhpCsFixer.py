@@ -1,5 +1,8 @@
-import sublime, sublime_plugin
-import os, tempfile, subprocess
+import sublime
+import sublime_plugin
+import os
+import tempfile
+import subprocess
 import re
 
 
@@ -128,8 +131,8 @@ def format_contents(contents, settings):
 
 
 def format_file(tmp_file, settings):
-    php_path = settings.get('php_path')
-    path = settings.get('path')
+    php_path = sublime.expand_variables(settings.get('php_path'), variables)
+    path = sublime.expand_variables(settings.get('path'), variables)
 
     if not path:
         path = locate_php_cs_fixer()
@@ -149,14 +152,12 @@ def format_file(tmp_file, settings):
         if not type(configs) is list:
             configs = [configs]
 
-        variables = get_active_window_variables()
-
         for config in configs:
             config_path = sublime.expand_variables(config, variables)
             if is_readable_file(config_path):
                 cmd.append('--config=' + config_path)
                 log_to_console("Using config: " + config_path)
-                break;
+                break
 
     if rules:
         if isinstance(rules, list):
@@ -199,7 +200,7 @@ def create_process_for_platform(cmd):
 
 def get_project_folder(file):
 
-    project_data = sublime.active_window().project_data();
+    project_data = sublime.active_window().project_data()
 
     if not project_data:
         return None
@@ -272,3 +273,8 @@ class SublimePhpCsFixListener(sublime_plugin.EventListener):
 
 class ExecutableNotFoundException(BaseException):
     pass
+
+
+def plugin_loaded():
+    global variables
+    variables = get_active_window_variables()
