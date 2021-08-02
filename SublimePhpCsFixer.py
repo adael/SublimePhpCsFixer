@@ -146,7 +146,7 @@ def format_file(tmp_file, settings):
     rules = settings.get('rules')
 
     cmd = [php_path] if php_path else []
-    cmd += [path, "fix", "--using-cache=off", tmp_file]
+    cmd += [path, "fix", "--using-cache=no", tmp_file]
 
     if configs:
         if not type(configs) is list:
@@ -161,7 +161,7 @@ def format_file(tmp_file, settings):
 
     if rules:
         if isinstance(rules, list):
-            rules = rules.join(",")
+            rules = ",".join(rules)
 
         if isinstance(rules, str):
             cmd.append("--rules=" + rules)
