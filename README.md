@@ -1,5 +1,5 @@
 # Sublime PHP CS Fixer
-This is a plugin for Sublime Text 3 to format PHP code through php-cs-fixer command on any view.
+This is a plugin for Sublime Text 3, to format PHP code through php-cs-fixer command on any view.
 
 # Features
 
@@ -21,12 +21,14 @@ Also you can create a config file as explained here https://github.com/FriendsOf
 
 *for example in:* `$HOME/.php-cs-fixer.php`
 
-    <?php
+```php
+<?php
     return (new PhpCsFixer\Config)
     ->setRules([
         '@Symfony' => true,
         'array_syntax' => ['syntax' => 'short'],
     ]);
+```
 
 If you've created a config file, you have to configure its path in the plugin's settings.
 
@@ -38,14 +40,17 @@ If you've created a config file, you have to configure its path in the plugin's 
 
 When using multiple projects with different configurations, it's possible to configure the path relative to the Sublime project folder:
 
+```json
     {
-        "config": "${folder}/.php-cs-fixer.php"
+        "config": "${folder}/.php-cs-fixer.php",
         "php": "${packages}/User/php",
         "path": "${packages}/User/php-cs-fixer.php"
     }
+```
 
 It's also possible to specify multiple config paths. In that case, the first readable file is used:
 
+```json
     {
         "config": [
             "${file_path}/.php-cs-fixer.php",
@@ -53,6 +58,7 @@ It's also possible to specify multiple config paths. In that case, the first rea
             "/path/to/.php-cs-fixer.php"
         ]
     }
+```
 
 See [`extract_variables` in the Sublime API Reference](https://www.sublimetext.com/docs/3/api_reference.html#sublime.Window) for the supported replacement variables. The value of the `${folder}` points the path of the first project in Sublime API. Here, it's beforehand replaced with the path of the project the target file belongs.
 
@@ -62,21 +68,19 @@ Although you can configure the rules directly on your plugin settings, it's reco
 
 ## Rules
 
+```json
     {
         "rules": {
             "@PhpCsFixer": true,
-        }
-
-        or
-
-        "rules": "@PhpCsFixer"
-
-        or
-
+        },
+        // or
+        "rules": "@PhpCsFixer",
+        // or
         "rules": [
             "@PhpCsFixer"
         ]
     }
+```
 
 For more information see: https://github.com/FriendsOfPHP/PHP-CS-Fixer#usage
 
@@ -85,12 +89,14 @@ For more information see: https://github.com/FriendsOfPHP/PHP-CS-Fixer#usage
 Since all php files are passed directly to the php-cs-fixer executable, a configured PhpCsFixer\\Finder gets ignored.
 In order to exclude files from php-cs-fixer, you can use the "exclude" setting:
 
+```json
     {
         "exclude": [
             ".*[\\\\/]vendor[\\\\/].*", // vendor-path (used by Composer)
             ".*\\.phtml$" // files ending with ".phtml"
         ]
     }
+```
 
 The exclude-filter uses python regular expressions.
 For more information see: https://docs.python.org/2/library/re.html
@@ -127,8 +133,8 @@ some details on how to configure it.
 
 # Acknowledgements
 
-I would like to thank to sensiolabs and contributors for their awesome package
-it works flawlessly. All the work here belongs to them.
+I would like to thank to sensiolabs and contributors for their awesome package.
+It works flawlessly. All the work here belongs to them.
 
 Check them at:
 
