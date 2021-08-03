@@ -6,6 +6,7 @@ import subprocess
 import re
 import json
 
+
 def load_settings():
     return sublime.load_settings("SublimePhpCsFixer.sublime-settings")
 
@@ -42,152 +43,45 @@ def which(program):
     return None
 
 
-def locate_php_cs_fixer():
-    project_path = sublime.active_window().project_data()['folders'][0]['path']
-    path = os.path.join(project_path, "vendor/bin/php-cs-fixer")
-    if is_executable_file(path):
-        log_to_console("uses local installation")
-        return path
+def fixer_possible_paths():
+    paths = []
 
     if is_windows():
-        paths = locate_in_windows()
+        executable_name = "php-cs-fixer.bat"
     else:
-        paths = locate_in_linux()
+        executable_name = "php-cs-fixer"
 
-    for path in paths:
-        if is_executable_file(path):
-            log_to_console("autodetected: " + path)
-            return path
-
-    log_to_console("php-cs-fixer file not found")
-
-
-def locate_in_windows():
-    """return possible paths for php-cs-fixer on Windows"""
-    paths = []
+    project_data = sublime.active_window().project_data()
+    project_path = project_data['folders'][0]['path']
+    paths.append(os.path.join(project_path, "vendor", "bin", executable_name))
 
     if "COMPOSER_HOME" in os.environ:
-        paths.append(os.environ["COMPOSER_HOME"] + "\\vendor\\bin\\php-cs-fixer.bat")
+        paths.append(os.path.join(
+            os.environ["COMPOSER_HOME"], "vendor", "bin", executable_name))
 
     if "APPDATA" in os.environ:
-        paths.append(os.environ["APPDATA"] + "\\composer\\vendor\\bin\\php-cs-fixer.bat")
-
-    paths.append(which("php-cs-fixer.bat"))
-
-    return paths
-
-
-def locate_in_linux():
-    """return possible paths for php-cs-fixer on Linux and Mac"""
-    paths = []
-
-    if "COMPOSER_HOME" in os.environ:
-        paths.append(os.environ["COMPOSER_HOME"] + "/vendor/bin/php-cs-fixer")
+        paths.append(os.path.join(
+            os.environ["APPDATA"], "composer", "bin", executable_name))
 
     if "HOME" in os.environ:
-        paths.append(os.environ["HOME"] + "/.composer/vendor/bin/php-cs-fixer")
-        paths.append(os.environ["HOME"] + "/.config/composer/vendor/bin/php-cs-fixer")
+        paths.append(os.path.join(
+            os.environ["HOME"],
+            ".composer",
+            "vendor",
+            "bin",
+            executable_name))
 
-    paths.append(which("php-cs-fixer"))
+        paths.append(os.path.join(
+            os.environ["HOME"],
+            ".config",
+            "composer",
+            "vendor",
+            "bin",
+            executable_name))
+
+    paths.append(which(executable_name))
 
     return paths
-
-
-def log_to_console(msg):
-    print("PHP CS Fixer: {0}".format(msg))
-
-
-def format_contents(contents, settings):
-    """
-    Write the contents in a temporary file, format it with php-cs-fixer and return the formatted contents.
-
-    For supporting ST2 and ST3, I do use the following, because it's compatible in python 2/3 and seems
-    to work properly.
-
-        - file.write(contents.encode(encoding))
-        - file.read().decode(encoding)
-
-    :param contents:
-    :return:
-    """
-    fd, tmp_file = tempfile.mkstemp()
-
-    encoding = "utf8"
-
-    with open(tmp_file, 'wb') as file:
-        file.write(contents.encode(encoding))
-        file.close()
-
-    try:
-        format_file(tmp_file, settings)
-        with open(tmp_file, 'rb') as file:
-            content = file.read().decode(encoding)
-            file.close()
-    finally:
-        os.close(fd)
-        os.remove(tmp_file)
-
-    return content
-
-
-def format_file(tmp_file, settings):
-    php_path = sublime.expand_variables(settings.get('php_path'), variables)
-    path = sublime.expand_variables(settings.get('path'), variables)
-
-    if not path:
-        path = locate_php_cs_fixer()
-
-    if not path:
-        raise ExecutableNotFoundException("Couldn't find php-cs-fixer")
-    if not is_executable_file(path):
-        raise ExecutableNotFoundException("Couldn't execute file: {0}".format(path))
-
-    configs = settings.get('config')
-    rules = settings.get('rules')
-
-    cmd = [php_path] if php_path else []
-    cmd += [path, "fix", "--using-cache=no", tmp_file]
-
-    if configs:
-        if not type(configs) is list:
-            configs = [configs]
-
-        for config in configs:
-            config_path = sublime.expand_variables(config, variables)
-            if is_readable_file(config_path):
-                cmd.append('--config=' + config_path)
-                log_to_console("Using config: " + config_path)
-                break
-
-    if rules:
-        if isinstance(rules, list):
-            rules = ",".join(rules)
-
-        if isinstance(rules, dict):
-            rules = json.dumps(rules)
-
-        if isinstance(rules, str):
-            cmd.append("--rules=" + rules)
-            log_to_console("Using rules: " + rules)
-
-    p = create_process_for_platform(cmd)
-    output, err = p.communicate()
-
-    if p.returncode != 0:
-        log_to_console("There was an error formatting the view")
-        log_to_console("Command: {0}".format(cmd))
-        log_to_console("Error output: {0}".format(err))
-
-
-def get_active_window_variables():
-    variables = sublime.active_window().extract_variables()
-
-    if 'file' in variables:
-        folder = get_project_folder(variables['file'])
-        if folder:
-            variables['folder'] = folder
-
-    return variables
 
 
 def create_process_for_platform(cmd):
@@ -198,7 +92,12 @@ def create_process_for_platform(cmd):
     else:
         si = None
 
-    return subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, bufsize=0, startupinfo=si)
+    return subprocess.Popen(
+        cmd,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        bufsize=0,
+        startupinfo=si)
 
 
 def get_project_folder(file):
@@ -217,48 +116,235 @@ def get_project_folder(file):
     return None
 
 
+class Logger:
+    def __init__(self, settings):
+        self.settings = settings
+
+    def console(self, msg):
+        print("PHP CS Fixer: {0}".format(msg))
+
+    def debug(self, msg):
+        if self.settings.get("debug"):
+            print("PHP CS Fixer (DEBUG): {0}".format(msg))
+
+
+class FormatterSettings:
+    def __init__(self, settings):
+        self.settings = settings
+        self.variables = self.get_active_window_variables()
+
+    def get(self, key):
+        return self.settings.get(key)
+
+    def get_expanded(self, key):
+        return self.expand(self.settings.get(key))
+
+    def expand(self, value):
+        return sublime.expand_variables(value, self.variables)
+
+    def get_active_window_variables(self):
+        variables = sublime.active_window().extract_variables()
+
+        if 'file' in variables:
+            folder = get_project_folder(variables['file'])
+            if folder:
+                variables['folder'] = folder
+
+        return variables
+
+
+class FixerProcess:
+    def __init__(self, settings: FormatterSettings, logger: Logger):
+        self.logger = logger
+        self.settings = settings
+
+    def run(self, tmp_file):
+        cmd = self.create_cmd(tmp_file)
+        self.logger.debug("Using cmd:")
+        self.logger.debug(cmd)
+
+        p = create_process_for_platform(cmd)
+        output, err = p.communicate()
+
+        if p.returncode != 0:
+            self.logger.console("There was an error formatting the view")
+            self.logger.console("Command: {0}".format(cmd))
+            self.logger.console("Error output: {0}".format(err))
+
+    def create_cmd(self, tmp_file):
+        return list(filter(None, [
+            self.settings.get_expanded('php_path'),
+            self.get_configured_php_cs_fixer_path(),
+            "fix",
+            self.config_param(),
+            self.rules_param(),
+            "--using-cache=no",
+            tmp_file,
+        ]))
+
+    def config_param(self):
+        configs = self.settings.get("config")
+
+        if not configs:
+            return None
+
+        if not type(configs) is list:
+            configs = [configs]
+
+        for config in configs:
+            config_path = self.settings.expand(config)
+            self.logger.debug("Looking for config: " + config_path)
+            if is_readable_file(config_path):
+                self.logger.console("Using config: " + config_path)
+                return '--config=' + config_path
+
+        self.logger.debug("Not using config")
+
+        return None
+
+    def rules_param(self):
+        rules = self.settings.get('rules')
+
+        if not rules:
+            return None
+
+        if isinstance(rules, list):
+            rules = ",".join(rules)
+
+        if isinstance(rules, dict):
+            rules = json.dumps(rules)
+
+        if isinstance(rules, str):
+            self.logger.console("Using rules: " + rules)
+            return "--rules=" + rules
+
+        return None
+
+    def get_configured_php_cs_fixer_path(self):
+        path = self.settings.get_expanded('path')
+
+        if not path:
+            path = self.locate_php_cs_fixer()
+
+        if not path:
+            raise ExecutableNotFoundException("Couldn't find php-cs-fixer")
+
+        if not is_executable_file(path):
+            raise ExecutableNotFoundException(
+                "Couldn't execute file: {0}".format(path))
+
+        return path
+
+    def locate_php_cs_fixer(self):
+        paths = fixer_possible_paths()
+        for path in paths:
+            self.logger.debug("looking for php-cs-fixer at: " + path)
+            if is_executable_file(path):
+                self.logger.console("autodetected: " + path)
+                return path
+
+        self.logger.console("php-cs-fixer file not found")
+
+
+class ViewFormatter:
+
+    def __init__(self, settings: FormatterSettings, logger):
+        self.settings = settings
+        self.logger = logger
+
+    def format(self, contents):
+        self.logger.console("Formatting view...")
+        return self.format_contents(contents)
+
+    def format_contents(self, contents):
+        """
+        Write the contents in a temporary file, format it with php-cs-fixer and returns the formatted contents.
+
+        For supporting ST2 and ST3, I do use the following, because it's compatible in python 2/3 and seems
+        to work properly.
+
+            - file.write(contents.encode(encoding))
+            - file.read().decode(encoding)
+
+        :param contents:
+        :return:
+        """
+        fd, tmp_file = tempfile.mkstemp()
+
+        encoding = self.settings.get("encoding")
+
+        with open(tmp_file, 'wb') as file:
+            file.write(contents.encode(encoding))
+            file.close()
+
+        try:
+            self.format_file(tmp_file)
+            with open(tmp_file, 'rb') as file:
+                content = file.read().decode(encoding)
+                file.close()
+        finally:
+            os.close(fd)
+            os.remove(tmp_file)
+
+        return content
+
+    def format_file(self, tmp_file):
+        fixer = FixerProcess(self.settings, self.logger)
+        fixer.run(tmp_file)
+
+
 class SublimePhpCsFixCommand(sublime_plugin.TextCommand):
+
     def __init__(self, view):
         sublime_plugin.TextCommand.__init__(self, view)
         self.settings = load_settings()
+        self.logger = Logger(self.settings)
 
     def is_enabled(self):
-        return self.is_supported_scope(self.view)
+        return self.is_supported_scope()
 
     def run(self, edit):
         try:
-            log_to_console("Formatting view...")
-            region = sublime.Region(0, self.view.size())
-            contents = self.view.substr(region)
-
-            if contents:
-                formatted = format_contents(contents, self.settings)
-                if formatted and formatted != contents:
-                    self.view.replace(edit, region, formatted)
-                    log_to_console("Done. View formatted")
-                else:
-                    log_to_console("Done. No changes")
-            else:
-                log_to_console("Done. No contents")
+            self.format(edit)
         except ExecutableNotFoundException as e:
-            log_to_console(str(e))
+            self.logger.console(str(e))
 
-    def is_supported_scope(self, view):
-        return 'embedding.php' in view.scope_name(view.sel()[0].begin()) and not self.is_excluded(view)
+    def format(self, edit):
+        region = sublime.Region(0, self.view.size())
+        contents = self.view.substr(region)
 
-    def is_excluded(self, view):
+        if not contents:
+            self.logger.console("Done. No contents")
+            return
+
+        formatter = ViewFormatter(
+            FormatterSettings(self.settings), self.logger)
+        new_contents = formatter.format(contents)
+
+        if new_contents and new_contents != contents:
+            self.view.replace(edit, region, new_contents)
+            self.logger.console("Done. View formatted")
+        else:
+            self.logger.console("Done. No changes")
+
+    def is_supported_scope(self):
+        scopes = self.view.scope_name(self.view.sel()[0].begin())
+        return 'embedding.php' in scopes and not self.is_excluded()
+
+    def is_excluded(self):
         if not self.settings.has('exclude'):
             return False
 
         exclude = self.settings.get('exclude')
-        file_name = view.file_name()
+        file_name = self.view.file_name()
 
         if not type(exclude) is list:
             exclude = [exclude]
 
         for pattern in exclude:
             if re.match(pattern, file_name) is not None:
-                log_to_console(file_name + ' is excluded via pattern: ' + pattern)
+                self.logger.console(
+                    file_name + ' is excluded via pattern: ' + pattern)
                 return True
 
         return False
@@ -276,8 +362,3 @@ class SublimePhpCsFixListener(sublime_plugin.EventListener):
 
 class ExecutableNotFoundException(BaseException):
     pass
-
-
-def plugin_loaded():
-    global variables
-    variables = get_active_window_variables()

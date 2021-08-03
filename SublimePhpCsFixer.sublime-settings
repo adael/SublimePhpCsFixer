@@ -5,5 +5,7 @@
     "config": "",
     "on_save": false,
     "on_load": false,
-    "exclude": []
+    "exclude": [],
+    "debug": false,
+    "encoding": "utf8"
 }
