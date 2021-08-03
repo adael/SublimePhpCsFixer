@@ -41,7 +41,8 @@ If you've created a config file, you have to configure its path in the plugin's 
 }
 ```
 
-When using multiple projects with different configurations, it's possible to configure the path relative to the Sublime project folder:
+When using multiple projects with different configurations, it's possible to
+configure the path relative to the Sublime project folder:
 
 ```js
 {
@@ -63,11 +64,16 @@ It's also possible to specify multiple config paths. In that case, the first rea
 }
 ```
 
-See [`extract_variables` in the Sublime API Reference](https://www.sublimetext.com/docs/3/api_reference.html#sublime.Window) for the supported replacement variables. The value of the `${folder}` points the path of the first project in Sublime API. Here, it's beforehand replaced with the path of the project the target file belongs.
+See [`extract_variables` in the Sublime API Reference](https://www.sublimetext.com/docs/3/api_reference.html#sublime.Window)
+for the supported replacement variables. The value of the `${folder}` points
+the path of the first project in Sublime API. Here, it's beforehand replaced
+with the path of the project the target file belongs.
 
-Please note that this plugin don't try to find the config file automatically. If you want to create a config file, you have to specify its path in the plugin settings.
+Please note:
 
-Although you can configure the rules directly on your plugin settings, it's recommended to create the config file, as it's easier to configure every rule than using the 'rules' directive in the plugin settings.
+* **`rules` and `config` directives are excluding.**
+* This plugin don't try to find the config file automatically. If you want to
+create a config file, you have to specify its path in the plugin settings.
 
 ## Rules
 
@@ -84,6 +90,8 @@ Although you can configure the rules directly on your plugin settings, it's reco
     ]
 }
 ```
+
+*Please note that `rules` and `config` directives are excluding.*
 
 For more information see: https://github.com/FriendsOfPHP/PHP-CS-Fixer#usage
 

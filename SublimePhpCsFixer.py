@@ -172,12 +172,19 @@ class FixerProcess:
             self.logger.console("Error output: {0}".format(err))
 
     def create_cmd(self, tmp_file):
+        config = self.config_param()
+        rules = self.rules_param()
+
+        if rules and config:
+            self.logger.console("rules and config are both present, rules prevails")
+            config = None
+
         return list(filter(None, [
             self.settings.get_expanded('php_path'),
             self.get_configured_php_cs_fixer_path(),
             "fix",
-            self.config_param(),
-            self.rules_param(),
+            rules,
+            config,
             "--using-cache=no",
             tmp_file,
         ]))
