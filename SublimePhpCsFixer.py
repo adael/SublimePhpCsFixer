@@ -11,10 +11,6 @@ def load_settings():
     return sublime.load_settings("SublimePhpCsFixer.sublime-settings")
 
 
-def load_project_settings():
-    return sublime.active_window().active_view().settings().get('SublimePhpCsFixer')
-
-
 def setting_enabled(name):
     return load_settings().get(name)
 
@@ -133,22 +129,15 @@ class Logger:
 
 
 class FormatterSettings:
-    def __init__(self, settings, project_settings):
+    def __init__(self, settings):
         self.settings = settings
-        self.project_settings = project_settings
         self.variables = self.get_active_window_variables()
 
-    def has(self, key):
-        return self.settings.has(key) or self.project_settings.get(key)
-
     def get(self, key):
-        value = self.project_settings.get(key)
-        if value:
-            return value
         return self.settings.get(key)
 
     def get_expanded(self, key):
-        return self.expand(self.get(key))
+        return self.expand(self.settings.get(key))
 
     def expand(self, value):
         return sublime.expand_variables(value, self.variables)
@@ -315,7 +304,7 @@ class SublimePhpCsFixCommand(sublime_plugin.TextCommand):
 
     def __init__(self, view):
         sublime_plugin.TextCommand.__init__(self, view)
-        self.settings = FormatterSettings(load_settings(), load_project_settings())
+        self.settings = load_settings()
         self.logger = Logger(self.settings)
 
     def is_enabled(self):
@@ -335,7 +324,8 @@ class SublimePhpCsFixCommand(sublime_plugin.TextCommand):
             self.logger.console("Done. No contents")
             return
 
-        formatter = ViewFormatter(self.settings, self.logger)
+        formatter = ViewFormatter(
+            FormatterSettings(self.settings), self.logger)
         new_contents = formatter.format(contents)
 
         if new_contents and new_contents != contents:
