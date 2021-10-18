@@ -1,5 +1,5 @@
 # Sublime PHP CS Fixer
-This is a plugin for Sublime Text 3, to format PHP code through php-cs-fixer command on any view.
+This is a plugin for Sublime Text 3/4, to format PHP code through php-cs-fixer command on any view.
 
 # Features
 
