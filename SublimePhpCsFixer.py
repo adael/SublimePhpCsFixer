@@ -175,6 +175,7 @@ class FixerProcess:
     def create_cmd(self, tmp_file):
         config = self.config_param()
         rules = self.rules_param()
+        allow_risky = self.allow_risky_param()
 
         if rules and config:
             self.logger.console("rules and config are both present, rules prevails")
@@ -186,6 +187,7 @@ class FixerProcess:
             "fix",
             rules,
             config,
+            allow_risky,
             "--using-cache=no",
             tmp_file,
         ]))
@@ -226,6 +228,12 @@ class FixerProcess:
             self.logger.console("Using rules: " + rules)
             return "--rules=" + rules
 
+        return None
+
+    def allow_risky_param(self):
+        if self.settings.get("allow_risky"):
+            return "--allow-risky=yes"
+        
         return None
 
     def get_configured_php_cs_fixer_path(self):
