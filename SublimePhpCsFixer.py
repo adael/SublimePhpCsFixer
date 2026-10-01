@@ -52,8 +52,9 @@ def fixer_possible_paths():
         executable_name = "php-cs-fixer"
 
     project_data = sublime.active_window().project_data()
-    if project_data:
-        project_path = project_data['folders'][0]['path']
+    folders = project_data.get('folders', []) if project_data else []
+    if folders:
+        project_path = folders[0]['path']
         paths.append(os.path.join(project_path, "vendor", "bin", executable_name))
 
     if "COMPOSER_HOME" in os.environ:
